@@ -18,7 +18,7 @@ A aplicação exibe uma lista de tarefas com suporte a **paginação, ordenaçã
   - Total de itens (`count`)
   - Lista de dados (`data`)
   
-- **Serviço e Repositório:**  
+- **Serviço:**  
   - Lógica de paginação e ordenação implementadas em `TodoService.cs`.
     
 - **Ordenação:**  
