@@ -87,35 +87,44 @@ A aplicação exibe uma lista de tarefas com suporte a **paginação, ordenaçã
 
 # Architecture Question: Offline asset management system
 
-## Overview
-- There's a fully operational online asset management system (web system: web browser communicating with web server application). This online system has a datasource
-- Management wants you to design an offline system that access the same datasource:
-	- the clients have limited timespam access to network connectivity
-	- in these moments the clients synchronize their work (the data changes they made, CRUD operations)
-	- the synchronization consists of downloading new data (recent changes to the datasource) and uploading their work (pushing changes to the datasource)
-	- potentially 2 clients might modify the same data while working in the offline application. Also any online modification could take place after the client has synched their data therefore some sort of conflict resolution strategy should take place
-	- the network bandwidth is limited, therefore the amount of data transferred needs to be minimized at all times
-	- the offline consists of an app and a back-end application to handle the synchronization with the shared datasource
+### **Como o sistema irá funcionar**
+A arquitetura funcionaria em três partes:
 
-### High-level infrastructure diagram
-
-![Alt text](https://github.com/controltechnologysolutions/hrquestions/blob/master/assets/exam_infra_diagram.png "High-level infrastructure diagram")
+#### 1. **Aplicativo Offline**
+- Funciona no navegador como PWA
+- Armazena uma cópia local dos dados utilizando IndexedDB.
+- Permite realizar operações CRUD mesmo sem conexão
+- Quando a conexão volta, ele envia as alterações feitas e baixa os dados atualizados do servidor.
 
 ---
 
-## Task
-Describe a high level architecture for the offline system described above.
-The architecture should span both back-end and front-end parts of the system.
-Feel free to use any diagrams you think are necessary to explain the choosen architecture.
-If you choose any particular technology to compose a technology stack you should describe what the product does and why it is important that it is used in this scenario
+#### 2. **Servidor de Sincronização**
+- É uma **API intermediária** que faz a ponte entre o aplicativo offline e o banco de dados online.  
+- Quando o usuário se conecta, ela:
+  - Recebe as alterações feitas localmente;
+  - Compara com a versão atual do banco;
+  - Resolve conflitos utilizando o rowstamp como base;
+  - Retorna para o cliente os dados novos ou alterados que ele ainda não tinha.
 
-### Assume the following
-- Online system design is out of the scope (it is already fully functional and can't be modified)
-- The datasource is a SQL Database
-- The datasource is composed by a single table: 
-	- `Asset(id: long, data: string, rowstamp: timestamp)` 
-	- rowstamp value is updated automatically anytime an edit on the record happens
-- The only link between the online and offline systems is the datasource
-- First time the client accesses the offline app the data is downloaded 
-- You are free to use any technology stack you wish but you can't change the technologies already chosen for the datasource's RDBMS or the online system
-- Performance and scalability (growing number of clients) are a main concern
+---
+
+#### 3. **Banco de Dados Online**
+- Mantém todos os dados originais e o campo rowstamp, que é atualizado automaticamente toda vez que algo muda.  
+- O rowstamp é usado para saber o que foi modificado desde o último sincronismo.
+
+---
+
+### **Fluxo de Uso**
+- No primeiro acesso usuário baixa todos os dados disponíveis do banco
+- Ele pode continuar criando ou alterando os dados localmente
+- Ao retornar a conexão o app envia as alterações e recebe as atualizações do servidor
+- O servidor comparar as versões e resolve os conflitos se existirem
+- No final ocorre a atualização onde o cliente e o banco ficam sincronizados
+
+---
+
+### **Stack Utilizada**
+
+- Front-end: React(PWA) + IndexedDB
+- Back-end: .NET Web API + SQL
+
