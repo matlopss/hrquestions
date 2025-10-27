@@ -16,9 +16,25 @@ namespace InterviewTestPagination.Controllers {
         private readonly IModelService<Todo> _todoService = new TodoService();
 
         [HttpGet]
-        public IEnumerable<Todo> Todos(/* parameters  */) {
-            return _todoService.Repository.All();
+        [Route("api/Todo/Paginated")]
+
+        public IHttpActionResult GetPaginated(int page, int pageSize, string sortBy = "CreatedDate", bool descending = true) {
+        
+            //Se o pageSize for 0, retorna todos (all)
+            if(pageSize == 0){
+                pageSize = int.MaxValue;
+            }
+
+            var result = _todoService.ListPaginated(page, pageSize, sortBy, descending);
+
+            return Ok(result);
+            
         }
+        
+        //Comentado pois não está mais sendo usado
+        //public IEnumerable<Todo> Todos(/* parameters  */) {
+        //    return _todoService.List();
+        //}
 
     }
 }

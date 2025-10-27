@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using InterviewTestPagination.Models;
 
 namespace InterviewTestPagination.Models {
     /// <summary>
@@ -19,5 +20,8 @@ namespace InterviewTestPagination.Models {
         /// </summary>
         /// <returns></returns>
         IEnumerable<T> List(/* parameters */);
+
+        PaginatedResult<T> ListPaginated(int page, int pageSize, string sortBy = "createdDate", bool descending = true); // TODO: implement>
     }
+
 }

@@ -1,4 +1,4 @@
-﻿<!-- table of contents -->
+﻿﻿<!-- table of contents -->
 <table>
     <!-- table:header -->
     <tr>
@@ -21,20 +21,34 @@
             . the indicators don't need to look pretty, they just have to be distinct (ascending from descending) and communicate well what they're doing
 
         -->
-        <th>Id </th>
-        <th>Task </th>
-        <th>Created Date </th>
+
+        <th ng-click="sort('id')">
+            Id
+            <span ng-if="userSorted && sortBy === 'id'">{{ descending ? '↓' : '↑' }}</span>
+        </th>
+        <th ng-click="sort('task')">
+            Task
+            <span ng-if="userSorted && sortBy === 'task'">{{ descending ? '↓' : '↑' }}</span>
+        </th>
+        <th ng-click="sort('createdDate')">
+            Created Date
+            <span ng-if="userSorted && sortBy === 'createdDate'">{{ descending ? '↓' : '↑' }}</span>
+        </th>
     </tr>
-    
+
     <!-- table:body -->
     <!--
 
     When the list is still loading (first load or any request made to server to fetch a page):
     - A loading indicator should be displayed instead of the table body to indicate it
-    - It can be any kind of indicator (text, icon, img, etc). 
+    - It can be any kind of indicator (text, icon, img, etc).
     - Dont worry about styling (looking pretty, centralized, etc) it just has to show that the app is still active while the request is being made
 
     -->
+    <tr ng-if="loading">
+        <td colspan="3">Carregando...</td>
+    </tr>
+
     <tr ng-repeat="todo in todos track by $index">
         <td>{{todo.id}}</td>
         <td>{{todo.task}}</td>
@@ -43,4 +57,10 @@
 </table>
 
 <!-- pagination component -->
-<pagination></pagination>
+<pagination page="page"
+            page-size="pageSize"
+            total-count="totalCount"
+            total-pages="totalPages"
+            on-page-change="changePage(newPage)"
+            on-page-size-change="setPageSize(size)">
+</pagination>
