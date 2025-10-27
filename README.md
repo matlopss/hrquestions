@@ -19,9 +19,8 @@ A aplicação exibe uma lista de tarefas com suporte a **paginação, ordenaçã
   - Lista de dados (`data`)
   
 - **Serviço e Repositório:**  
-  - Lógica de paginação e ordenação implementadas em `TodoService.cs`.  
-  - Fonte de dados em memória simulando um banco real (`TodoRepository.cs`), com 55 tarefas pré-carregadas.  
-
+  - Lógica de paginação e ordenação implementadas em `TodoService.cs`.
+    
 - **Ordenação:**  
   Suporte à ordenação por `Id`, `Task` e `CreatedDate`, com alternância entre ascendente e descendente.
 
